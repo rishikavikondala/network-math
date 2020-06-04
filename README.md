@@ -1,1 +1,1 @@
-# Netwrork Math
+# Network Math
