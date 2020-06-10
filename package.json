@@ -1,0 +1,17 @@
+{
+    "name": "network-math",
+    "version": "1.0.0",
+    "description": "Simplifies standard networking calculations",
+    "license": "MIT",
+    "repository": "rishikavikondala/network-math",
+    "main": "index.js",
+    "keywords": [
+        "networking",
+        "ipv4",
+        "address",
+        "subnet",
+        "mask",
+        "conversions",
+        "binary"
+    ]
+}
