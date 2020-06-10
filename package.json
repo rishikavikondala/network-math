@@ -1,6 +1,6 @@
 {
     "name": "network-math",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Simplifies standard networking calculations",
     "license": "MIT",
     "repository": "rishikavikondala/network-math",
