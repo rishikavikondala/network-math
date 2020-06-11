@@ -1,12 +1,26 @@
 # network-math
 
-### *An npm module that performs standard calculations that are used in network design and engineering.*
-
-### Version: 1.0.3
+### Version: 1.0.4
 
 ## Installation
 ```
-npm install network-math
+npm install network-math --save
+```
+
+## Usage
+```
+const nm = require('network-math');
+
+const octet = nm.numToBinary(116, true);
+// 01110100
+const binary = nm.numToBinary(116, false);
+// 1110100
+const num = nm.binaryOctetToNum('11010110');
+// 214
+const maskBinary = nm.cidrToSubnetMask(25, true);
+// 255.255.255.128
+const mask = nm.cidrToSubnetMask(25, false); 
+// 11111111.11111111.11111111.10000000
 ```
 
 ## API
@@ -32,6 +46,7 @@ Parameters:
 
 Exceptions:
 - PropertyError thrown if octet is not eight characters long
+- Error thrown if octet has characters besides 0 and 1
 - TypeError thrown if octet is not a string
 
 

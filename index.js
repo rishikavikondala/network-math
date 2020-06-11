@@ -20,7 +20,7 @@ const numToBinary = (num, useOctet) => {
     if(num === parseInt(data, 10)) {
         throw new TypeError('num must be an  integer');
     }
-    if(useOctet != true && useOcter != false) {
+    if(useOctet != true && useOctet != false) {
         throw new TypeError('useOctet must be a boolean');
     }
     var numDigits = 0;
@@ -51,6 +51,7 @@ Parameters:
 - octet -> an eight-character binary number
 Exceptions:
 - PropertyError thrown if octet is not eight characters long
+- Error thrown if octet has characters besides 0 and 1
 - TypeError thrown if octet is not a string
 */
 const binaryOctetToNum = (octet) => {
@@ -60,10 +61,12 @@ const binaryOctetToNum = (octet) => {
     if(typeof octet != 'string') {
         throw new TypeError('octet must be a string');
     }
-    if(octet)
     var num = 0;
     var index = 0;
     for(var i = octet.length - 1; i >= 0; i--) {
+        if(octet.charAt(i) != '0' || octet.charAt(i) != '1') {
+            throw new Error('octet must only have 0s and 1s');
+        }
         if(octet.charAt(index) == '1') {
             num += Math.pow(2, i);
         }
