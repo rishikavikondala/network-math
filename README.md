@@ -11,7 +11,7 @@ npm install network-math
 
 ## API
 
-`numToBinary(num, useOctet)`<br>
+### `numToBinary(num, useOctet)`<br>
 Returns the binary equivalent of an integer. <br>
 Parameters:
 - num - an integer between 0 and 255, inclusive.
@@ -25,7 +25,7 @@ Exceptions:
 - TypeError thrown if useOctet is not a boolean
 
 
-`binaryOctetToNum(octet)` <br>
+### `binaryOctetToNum(octet)` <br>
 Returns the integer equivalent of a binary octet. <br>
 Parameters:
 - octet - an eight-character binary number
@@ -35,7 +35,7 @@ Exceptions:
 - TypeError thrown if octet is not a string
 
 
-`cidrToSubnetMask(cidr, inBinary)` <br>
+### `cidrToSubnetMask(cidr, inBinary)` <br>
 Returns the subnet mask equivalent of a CIDR. <br>
 Parameters:
 - cidr - an integer between 0 and 32, inclusive.
