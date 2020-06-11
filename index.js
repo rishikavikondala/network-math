@@ -1,6 +1,28 @@
+/*
+Returns the binary equivalent of an integer.
+Parameters:
+- num -> an integer between 0 and 255, inclusive.
+- useOctet -> a boolean
+    - if true ->  adds preceding zeroes to the binary for a complete octet
+    - if false -> does not add zeroes to the binary
+Exceptions:
+- RangeError thrown if num is not between 0 and 255
+- TypeError thrown if num is not an integer
+- TypeError thrown if useOctet is not a boolean
+*/
 const numToBinary = (num, useOctet) => {
-    if(num == 0) { return '0'; }
-    if(num > 255) {return 'Invalid number'; }
+    if(num == 0) { 
+        return '0';
+    }
+    if(num > 255 || num < 0) {
+        throw new RangeError('num must be between 0 and 255, inclusive.'); 
+    }
+    if(num === parseInt(data, 10)) {
+        throw new TypeError('num must be an  integer');
+    }
+    if(useOctet != true && useOcter != false) {
+        throw new TypeError('useOctet must be a boolean');
+    }
     var numDigits = 0;
     var current = 1;
     while(current <= num) {
@@ -23,8 +45,22 @@ const numToBinary = (num, useOctet) => {
     return binary;
 }
 
+/*
+Returns the integer equivalent of a binary octet.
+Parameters:
+- octet -> an eight-character binary number
+Exceptions:
+- PropertyError thrown if octet is not eight characters long
+- TypeError thrown if octet is not a string
+*/
 const binaryOctetToNum = (octet) => {
-    if(octet.length != 8) { return "Invalid octet"; }
+    if(octet.length != 8) {
+        throw new PropertyError('octet must be 8 characters long');
+    }
+    if(typeof octet != 'string') {
+        throw new TypeError('octet must be a string');
+    }
+    if(octet)
     var num = 0;
     var index = 0;
     for(var i = octet.length - 1; i >= 0; i--) {
@@ -36,9 +72,27 @@ const binaryOctetToNum = (octet) => {
     return num;
 }
 
+/*
+Returns the subnet mask equivalent of a CIDR. <br>
+Parameters:
+- cidr -> an integer between 0 and 32, inclusive.
+- inBinary -> a boolean
+    - if true -> returns the subnet mask in binary
+    - if false -> returns the subnet mask using integers
+Exceptions:
+- RangeError thrown if cidr is not between 0 and 32, inclusive
+- TypeError thrown if num is not an integer
+- TypeError thrown if inBinary is not a boolean
+*/
 const cidrToSubnetMask = (cidr, inBinary) => {
-    if(cidr > 32 || cidr < 0) {
-        return "Invalid CIDR";
+    if(cidr < 0 || cidr > 32) {
+        throw new RangeError('cidr must be between 0 and 32');
+    }
+    if(cidr === parseInt(data, 10)) {
+        throw new TypeError('cidr must be an integer');
+    }
+    if(inBinary != true && inBinary != false) {
+        throw new TypeError('inBinary must be a boolean');
     }
     var conversion = new Map([
         ['11111111', '255'], ['11111110', '254'], ['11111100', '252'],
@@ -83,14 +137,15 @@ const cidrToSubnetMask = (cidr, inBinary) => {
     return mask.substring(0, mask.length - 1);
 }
 
+// Exporting for use in an npm module
 module.exports = {
     numToBinary,
     binaryOctetToNum,
     cidrToSubnetMask
 }
 
+// For development and testing purposes
 // function main() {
 //     console.log(numToBinary(116, true));
 // }
-
 // main();
