@@ -76,7 +76,7 @@ const binaryOctetToNum = (octet) => {
 }
 
 /*
-Returns the subnet mask equivalent of a CIDR. <br>
+Returns the subnet mask equivalent of a CIDR.
 Parameters:
 - cidr -> an integer between 0 and 32, inclusive.
 - inBinary -> a boolean
@@ -140,15 +140,95 @@ const cidrToSubnetMask = (cidr, inBinary) => {
     return mask.substring(0, mask.length - 1);
 }
 
+/*
+Returns the CIDR equivalent of a subnet mask.
+Parameters:
+- mask -> a string representation of a subnet mask
+Exceptions:
+- Error thrown if the mask does not contain the following format: num.num.num.num
+    - where num is an integer between 0 and 255, inclusive
+- TypeError thrown if mask is not a string
+*/
+const subnetMaskToCidr = (mask) => {
+    if(mask.indexOf('.') == -1) {
+        throw new Error('Mask must be formatted with periods');
+    }
+    var maskParts = mask.split('.');
+    if(maskParts.length != 4) {
+        throw new Error('Mask must contain four parts');
+    }
+    var conversion = new Map([
+        ['255', '11111111'], ['254', '11111110'], ['252', '11111100'],
+        ['248', '11111000'], ['240', '11110000'], ['224', '11100000'],
+        ['192', '11000000'], ['128', '10000000'], ['0', '00000000']
+    ]);
+    var cidr = 0;
+    for(var i = 0; i < maskParts.length; i++) {
+        if(!conversion.has(maskParts[i])) {
+            throw new Error('Invalid number in the subnet mask');
+        }
+        cidr += conversion.get(maskParts[i]).split('1').length - 1;
+    }
+    return cidr;
+}
+
+/*
+Returns a Map with:
+- number of subnets that can be made if the specified mask is applied. 
+- number of hosts that can exist within each subnet if the specified mask is applied.
+Parameters:
+- mask -> a string representation of a subnet mask
+Exceptions:
+- Error thrown if the mask does not contain the following format: num.num.num.num
+    - where num is an integer between 0 and 255, inclusive
+- TypeError thrown if mask is not a string
+*/
+const numSubnetsAndHostsInMask = (mask) => {
+    if(mask.indexOf('.') == -1) {
+        throw new Error('Mask must be formatted with periods');
+    }
+    var maskParts = mask.split('.');
+    if(maskParts.length != 4) {
+        throw new Error('Mask must contain four parts');
+    }
+    var conversion = new Map([
+        ['255', '11111111'], ['254', '11111110'], ['252', '11111100'],
+        ['248', '11111000'], ['240', '11110000'], ['224', '11100000'],
+        ['192', '11000000'], ['128', '10000000'], ['0', '00000000']
+    ]);
+    var numSubnets = 0;
+    var numHosts = 0;
+    for(var i = 0; i < maskParts.length; i++) {
+        if(!conversion.has(maskParts[i])) {
+            throw new Error('Invalid number in the subnet mask');
+        }
+        var numOnes = conversion.get(maskParts[i]).split('1').length - 1;
+        if(numOnes < 8) {
+            numSubnets = Math.pow(2, numOnes);
+            numHosts = Math.pow(2, numOnes) - 2;
+        }
+    }
+    var counts = new Map([
+        ['Number of subnets', numSubnets],
+        ['Number of hosts per subnet', numHosts]
+    ]);
+    return counts;
+}
+
 // Exporting for use in an npm module
 module.exports = {
     numToBinary,
     binaryOctetToNum,
-    cidrToSubnetMask
+    cidrToSubnetMask,
+    subnetMaskToCidr,
+    // numSubnetsAndHostsInMask
 }
 
-// For development and testing purposes
+// //For development and testing purposes
 // function main() {
-//     console.log(numToBinary(116, true));
+//     // var mask = '255.255.248.0';
+//     // console.log(subnetMaskToCidr(mask));
+//     var mask = '255.255.255.240';
+//     console.log(numSubnetsAndHostsInMask(mask));
 // }
-// main();
+main();

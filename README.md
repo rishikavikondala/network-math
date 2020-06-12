@@ -62,3 +62,15 @@ Exceptions:
 - RangeError thrown if num is not between 0 and 32, inclusive
 - TypeError thrown if cidr is not an integer
 - TypeError thrown if inBinary is not a boolean
+
+### `numSubnetsAndHostsInMask(mask)`
+Returns a Map with:
+- number of subnets that can be made if the specified mask is applied. 
+- number of hosts that can exist within each subnet if the specified mask is applied.
+Parameters:
+- mask - a string representation of a subnet mask
+
+Exceptions:
+- Error thrown if the mask does not contain the following format: num.num.num.num
+    - where num is an integer between 0 and 255, inclusive
+- TypeError thrown if mask is not a string
