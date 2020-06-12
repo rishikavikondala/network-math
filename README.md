@@ -1,7 +1,5 @@
 # network-math
 
-### Version: 1.0.4
-
 ## Installation
 ```
 npm install network-math --save
