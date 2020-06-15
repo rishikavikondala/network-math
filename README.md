@@ -19,6 +19,8 @@ const maskBinary = nm.cidrToSubnetMask(25, true);
 // 255.255.255.128
 const mask = nm.cidrToSubnetMask(25, false); 
 // 11111111.11111111.11111111.10000000
+const ipClass = getNetworkClass(172.27.8.131);
+// Class B
 ```
 
 ## API
@@ -61,14 +63,14 @@ Exceptions:
 - TypeError thrown if cidr is not an integer
 - TypeError thrown if inBinary is not a boolean
 
-### `numSubnetsAndHostsInMask(mask)`
-Returns a Map with:
-- number of subnets that can be made if the specified mask is applied. 
-- number of hosts that can exist within each subnet if the specified mask is applied.
+### `getNetworkClass(ip)`
+Returns the class of the network that a provided ipv4 address is in. <br>
 Parameters:
-- mask - a string representation of a subnet mask
+- ip -> an ip address (ipv4)
 
 Exceptions:
-- Error thrown if the mask does not contain the following format: num.num.num.num
+- Error thrown if the ip address does not contain the following format: num.num.num.num
     - where num is an integer between 0 and 255, inclusive
+- Error thrown if the ip address does not contain four octets
 - TypeError thrown if mask is not a string
+*/

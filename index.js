@@ -173,6 +173,82 @@ const subnetMaskToCidr = (mask) => {
 }
 
 /*
+Returns the class of the network that a provided ipv4 address is in
+Parameters:
+- ip -> an ip address (ipv4)
+Exceptions:
+- Error thrown if the ip address does not contain the following format: num.num.num.num
+    - where num is an integer between 0 and 255, inclusive
+- TypeError thrown if mask is not a string
+*/
+const getNetworkClass = (ip) => {
+    if(ip.indexOf('.') == -1) {
+        throw new Error('IP Address must be formatted with four periods');
+    }
+    var ipParts = ip.split('.');
+    if(ipParts.length != 4) {
+        throw new Error('IP Address must have four parts');
+    }
+    for(var i = 0; i < ipParts.length; i++) {
+        if(parseInt(ipParts[i]) > 255 || parseInt(ipParts[i]) < 0) {
+            throw new Error('IP Address must have octets between 0 and 255 inclusive');
+        } 
+    }
+    if(ipParts[0] >= 1 && ipParts[0] <= 126) {
+        return 'Class A'; // Default mask: 255.0.0.0
+    }
+    else if(ipParts[0] >= 128 && ipParts[0] <= 191) {
+        return 'Class B'; // Default mask: 255.255.0.0
+    }
+    else if(ipParts[0] >= 192 && ipParts[0] <= 223) {
+        return 'Class C'; // Default mask: 255.255.255.0
+    }
+    else if(ipParts[0] >= 224 && ipParts[0] <= 239) {
+        return 'Class D'; // Multicasting
+    }
+    else if(ipParts[0] >= 240 && ipParts[0] <= 255) {
+        return 'Class E'; // Experimental
+    }
+    return 'Loopback';
+}
+
+/*
+Returns a Map with:
+- number of subnets that can be made if the specified mask is applied. 
+- number of hosts that can exist within each subnet if the specified mask is applied.
+Parameters:
+- mask -> a string representation of a subnet mask
+Exceptions:
+- Error thrown if the cidr is not between 0 and 32, inclusive
+- Error thrown if the ip address does not contain the following format: num.num.num.num
+    - where num is an integer between 0 and 255, inclusive
+- TypeError thrown if ip is not a string
+- TypeError thrown if cidr is not an integer
+https://networkengineering.stackexchange.com/questions/7106/how-do-you-calculate-the-prefix-network-subnet-and-host-numbers#:~:text=Calculating%20the%20maximum%20possible%20number,bits%20in%20an%20IPv4%20address).
+*/
+// const calcNetworkIdBroadcast = (ip, cidr) => {
+//     if(ip.indexOf('.' == -1)) {
+//         throw new Error('IP Address must be formatted with four periods');
+//     }
+//     var ipParts = ip.split('.');
+//     var ipPartsInBinary = ['', '', '', ''];
+//     var fullIpInBinary = '';
+//     if(ipParts.length != 4) {
+//         throw new Error('IP Address must have four parts');
+//     }
+//     for(var i = 0; i < ipParts.length; i++) {
+//         ipPartsInBinary[i] = parseInt(numToBinary(ipParts[i], true));
+//         fullIpInBinary += ipPartsInBinary[i];
+//         //fullIpInBinary += '.';
+//     }
+//     fullIpInBinary = fullIpInBinary.substr(0, fullIpInBinary.length - 1);
+//     var networkPartOfAddress = fullIpInBinary.substr(0, cidr);
+//     var hostPartOfAddress = fullIpInBinary.substr(cidr, fullIpInBinary.length);
+//     var calcNetworkID = '0'.repeat(hostPartOfAddress.length);
+//     var calcBroadcast = '1'.repeat(hostPartOfAddress.length);
+// }
+
+/*
 Returns a Map with:
 - number of subnets that can be made if the specified mask is applied. 
 - number of hosts that can exist within each subnet if the specified mask is applied.
@@ -183,37 +259,37 @@ Exceptions:
     - where num is an integer between 0 and 255, inclusive
 - TypeError thrown if mask is not a string
 */
-const numSubnetsAndHostsInMask = (mask) => {
-    if(mask.indexOf('.') == -1) {
-        throw new Error('Mask must be formatted with periods');
-    }
-    var maskParts = mask.split('.');
-    if(maskParts.length != 4) {
-        throw new Error('Mask must contain four parts');
-    }
-    var conversion = new Map([
-        ['255', '11111111'], ['254', '11111110'], ['252', '11111100'],
-        ['248', '11111000'], ['240', '11110000'], ['224', '11100000'],
-        ['192', '11000000'], ['128', '10000000'], ['0', '00000000']
-    ]);
-    var numSubnets = 0;
-    var numHosts = 0;
-    for(var i = 0; i < maskParts.length; i++) {
-        if(!conversion.has(maskParts[i])) {
-            throw new Error('Invalid number in the subnet mask');
-        }
-        var numOnes = conversion.get(maskParts[i]).split('1').length - 1;
-        if(numOnes < 8) {
-            numSubnets = Math.pow(2, numOnes);
-            numHosts = Math.pow(2, numOnes) - 2;
-        }
-    }
-    var counts = new Map([
-        ['Number of subnets', numSubnets],
-        ['Number of hosts per subnet', numHosts]
-    ]);
-    return counts;
-}
+// const numSubnetsAndHostsInMask = (mask) => {
+//     if(mask.indexOf('.') == -1) {
+//         throw new Error('Mask must be formatted with four  periods');
+//     }
+//     var maskParts = mask.split('.');
+//     if(maskParts.length != 4) {
+//         throw new Error('Mask must contain four parts');
+//     }
+//     var conversion = new Map([
+//         ['255', '11111111'], ['254', '11111110'], ['252', '11111100'],
+//         ['248', '11111000'], ['240', '11110000'], ['224', '11100000'],
+//         ['192', '11000000'], ['128', '10000000'], ['0', '00000000']
+//     ]);
+//     var numSubnets = 0;
+//     var numHosts = 0;
+//     for(var i = 0; i < maskParts.length; i++) {
+//         if(!conversion.has(maskParts[i])) {
+//             throw new Error('Invalid number in the subnet mask');
+//         }
+//         var numOnes = conversion.get(maskParts[i]).split('1').length - 1;
+//         if(numOnes < 8) {
+//             numSubnets = Math.pow(2, numOnes);
+//             numHosts = Math.pow(2, numOnes) - 2;
+//         }
+//     }
+//     var counts = new Map([
+//         ['Number of subnets', numSubnets],
+//         ['Number of hosts per subnet', numHosts]
+//     ]);
+//     return counts;
+// }
 
 // Exporting for use in an npm module
 module.exports = {
@@ -221,14 +297,21 @@ module.exports = {
     binaryOctetToNum,
     cidrToSubnetMask,
     subnetMaskToCidr,
-    // numSubnetsAndHostsInMask
+    getNetworkClass
 }
 
-// //For development and testing purposes
-// function main() {
-//     // var mask = '255.255.248.0';
-//     // console.log(subnetMaskToCidr(mask));
-//     var mask = '255.255.255.240';
-//     console.log(numSubnetsAndHostsInMask(mask));
-// }
+//For development and testing purposes
+function main() {
+    var mask = '255.255.248.0';
+    // console.log(subnetMaskToCidr(mask));
+    // var addr = '11111111111111111111111110000000';
+    // var cidr = 25;
+    // var networkpart = addr.substr(0, cidr);
+    // var hostpart = addr.substr(cidr, addr.length);
+    // console.log(networkpart);
+    // console.log(networkpart.length);
+    // console.log(hostpart);
+    // console.log(hostpart.length);
+    // console.log(getNetworkClass(mask));
+}
 main();
